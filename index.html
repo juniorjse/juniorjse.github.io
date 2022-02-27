@@ -19,6 +19,7 @@
 </header>
 
 <main>
+    
     <div class="overlay"></div>
     <video src="/assets/media/Backgroundloop.mp4" muted loop autoplay></video>
     
@@ -27,7 +28,7 @@
             <span>Olá! Eu sou</span>
             <h2>Junior José</h2>
             <span id="message"></span> 
-            <button>CONHEÇA MAIS SOBRE MIM</button>
+            <button class="btnOpenModal" onclick="openModal()">CONHEÇA MAIS SOBRE MIM</button>
             <div class="arrow">
                <img src="/assets/media/arrow logo.svg" alt="">  
             </div>
@@ -176,6 +177,33 @@
         </div>
     </div>
 </footer>
+
+<div class="modal-container">
+  <div class="modal">
+    <span class="span">
+
+    <h2>Junior</h2>
+    <hr />
+            <p>
+                Junior José da Silva é estudante de Ciência da Computação-UFCG. Sua experiência em lógica de programação informa sua abordagem ágil. Junior é fomentado por sua paixão resolver problemas por meio de algoritmos. Ele se considera um "estudante para sempre", ansioso para desenvolver suas bases acadêmicas em softwares e ficar em sintonia com as tecnologias mais recentes por meio de cursos contínuos.
+            </p>
+            <br>
+            <p>
+        
+                Sua fome de conhecimento e determinação para transformar informação em ação contribuíram para seu sucesso mais recente como embaixador AmBev-tech, na qual pude estabeler relações entre a AMBEV, o ABI Academy Hack e a UFCG. Enquanto isso, ele melhorou muito a produtividade de sua equipe através da divulgação do programa; de recados importantes; resolução de dificuldades encontradas durante o projeto; workshop para a formação de times; e incentivando os times formados durante toda a trajetória deles.
+            </p>
+            <br>
+            <p>
+                Junior acredita que a atenção plena no local de trabalho é a chave para o sucesso !
+            </p>
+            <div class="btns">
+                <button class="btnClose" onclick="closeModal()">Close</button>
+              </div>
+    </span>
+    <hr />
+
+  </div>
+</div>
 
 
 </body>
