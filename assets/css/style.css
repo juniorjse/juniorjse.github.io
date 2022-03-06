@@ -418,10 +418,12 @@ section .contact {
   display: flex;
   justify-content: center;
   align-items: center;
+
 }
 @media (max-width: 600px) {
   section .contact {
     flex-wrap: wrap;
+
   }
 }
 section .contact .linkedin, section .contact .git, section .contact .email, section .contact .wp {
@@ -435,10 +437,13 @@ section .contact .linkedin, section .contact .git, section .contact .email, sect
   background-color: transparent;
   border: 3px solid #ff0022;
   cursor: pointer;
+
 }
 section .contact .linkedin:hover, section .contact .git:hover, section .contact .email:hover, section .contact .wp:hover {
   background-color: #ff0022;
+
 }
+
 
 .footer-line {
   width: 90%;
@@ -557,7 +562,7 @@ main.cards section.card.shop button {
 
 /*botões das castas*/
 main.cards section.card.project button {
-  background: linear-gradient(to right, #fe5f5f, #ffc7c7);
+  background: linear-gradient(to right, #e9202a, #ffc7c7);
 }
 /*tremer botão*/
 main.cards section.card.project button:hover {
