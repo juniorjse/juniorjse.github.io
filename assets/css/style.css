@@ -701,7 +701,6 @@ hr {
   
 }
 
-
 .btnClose {
   font-size: smaller;
   width: 100px;
@@ -709,7 +708,6 @@ hr {
   border: 30px solid #ff0022;
   font-size: 16px;
   transition: 0.6s;
-  
   background-color: rgba(0, 0, 0, 0.521);
   color: white;
   backdrop-filter: blur(10px);
@@ -721,7 +719,8 @@ hr {
   .modal {
     padding: 10px;
     width: 80%;
-  }   
+    
+  }
  }
 
  .btns button:hover,  .btns button:active{
@@ -737,7 +736,6 @@ hr {
    border-radius: 8px;
    box-shadow: 10px 10px 50px -40px #ff3e3e;
 
-   
  }
 
  .span > p{
@@ -755,8 +753,6 @@ hr {
   color:#ff0022;
 
  }
-
- 
 
  #myBtn{
    outline: none;
