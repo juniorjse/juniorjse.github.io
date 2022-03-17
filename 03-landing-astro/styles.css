@@ -65,9 +65,6 @@ body {
         transform: scale(1.1);
 }
 
-
-
-
 .conteudo {
     margin-bottom: 48px;
     border-top: 0.4px solid #000124;
@@ -192,8 +189,6 @@ body {
         transform: translateX(0);
     }
 }
-
-
 
 .conteudo-principal-imagem {
     height: 480px;
