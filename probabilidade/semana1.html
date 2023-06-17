@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intro. prob.</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 10px;
+        z-index: 999;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .navbar li {
+        margin: 0 10px;
+      }
+
+      .navbar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .navbar a:hover {
+        color: #4caf50;
+      }
+
+      .screen {
+        max-width: 800px;
+        margin: 70px auto 20px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      .chart-container {
+        text-align: center;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .text-container {
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+
+    <!-- Biblioteca do Google Charts -->
+    <script
+      type="text/javascript"
+      src="https://www.gstatic.com/charts/loader.js"
+    ></script>
+    <script type="text/javascript">
+      google.charts.load('current', { packages: ['corechart'] })
+      google.charts.setOnLoadCallback(drawCharts)
+
+      function drawCharts() {
+        drawAgeChart()
+        drawPizzaChart()
+      }
+
+      function drawAgeChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Idade', 'Frequência Absoluta'],
+          ['10 anos', 3],
+          ['12 anos', 5],
+          ['15 anos', 2],
+          ['8 anos', 4],
+          ['6 anos', 1]
+        ])
+
+        var options = {
+          title: 'Gráfico de Colunas - Idade',
+          hAxis: { title: 'Idade' },
+          vAxis: { title: 'Frequência Absoluta' },
+          bars: 'vertical',
+          legend: { position: 'none' },
+          chartArea: { width: '80%', height: '70%' }
+        }
+
+        var chart = new google.visualization.ColumnChart(
+          document.getElementById('age-chart-container')
+        )
+        chart.draw(data, options)
+      }
+
+      function drawPizzaChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Sabor de Pizza', 'Vendas'],
+          ['Calabresa', 8],
+          ['Mussarela', 12],
+          ['Frango com Catupiry', 5],
+          ['Portuguesa', 10],
+          ['Quatro Queijos', 7]
+        ])
+
+        var options = {
+          title: 'Sabores de Pizza Mais Vendidos',
+          is3D: true,
+          chartArea: { width: '80%', height: '70%' }
+        }
+
+        var chart = new google.visualization.PieChart(
+          document.getElementById('pizza-chart-container')
+        )
+        chart.draw(data, options)
+      }
+    </script>
+  </head>
+  <body>
+    <div class="navbar">
+      <ul>
+        <li><a href="semana1.html">Semana 1</a></li>
+        <li><a href="semana2.html">Semana 2</a></li>
+        <li><a href="semana3.html">Semana 3</a></li>
+      </ul>
+    </div>
+
+    <div class="screen">
+      <div class="text-container">
+        <h2>Exemplo de Gráfico de Colunas - Idade</h2>
+        <p>
+          Este é um exemplo fictício de um gráfico de colunas que representa a
+          frequência absoluta de diferentes idades em uma amostra. Cada coluna
+          representa uma faixa etária e a altura da coluna indica quantas
+          pessoas se enquadram nessa faixa.
+        </p>
+      </div>
+      <div id="age-chart-container" class="chart-container"></div>
+      <table>
+        <tr>
+          <th>Classe (Idade)</th>
+          <th>Freq. Absoluta (fi)</th>
+          <th>Freq. Relativa (fr)</th>
+          <th>Porcentagem (%)</th>
+          <th>Freq. Absoluta Acumulada (fac)</th>
+        </tr>
+        <tr>
+          <td>10 anos</td>
+          <td>3</td>
+          <td>0.2</td>
+          <td>20%</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>12 anos</td>
+          <td>5</td>
+          <td>0.333</td>
+          <td>33.3%</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>15 anos</td>
+          <td>2</td>
+          <td>0.133</td>
+          <td>13.3%</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>8 anos</td>
+          <td>4</td>
+          <td>0.267</td>
+          <td>26.7%</td>
+          <td>14</td>
+        </tr>
+        <tr>
+          <td>6 anos</td>
+          <td>1</td>
+          <td>0.067</td>
+          <td>6.7%</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th>15</th>
+          <th>1</th>
+          <th>100%</th>
+          <th>-</th>
+        </tr>
+      </table>
+    </div>
+
+    <div class="screen">
+      <div class="text-container">
+        <h2>Exemplo de Gráfico de Pizza - Sabores de Pizza Mais Vendidos</h2>
+        <p>
+          Este é um exemplo fictício de um gráfico de pizza que representa os
+          sabores de pizza mais vendidos em uma pizzaria. Cada fatia do gráfico
+          representa um sabor de pizza e a porcentagem indica a participação nas
+          vendas totais.
+        </p>
+      </div>
+      <div id="pizza-chart-container" class="chart-container"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Sabor de Pizza</th>
+            <th>Vendas</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Calabresa</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>Mussarela</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>Frango com Catupiry</td>
+            <td>5</td>
+          </tr>
+          <tr>
+            <td>Portuguesa</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>Quatro Queijos</td>
+            <td>7</td>
+          </tr>
+          <tr>
+            <th>Total</th>
+            <th>42</th>
+          </tr>
+        </tbody>
+      </table>
+      <h2>Tabela de Organização de Dados por Sabor de Pizza</h2>
+      <table>
+        <tr>
+          <th>Classe (Sabor)</th>
+          <th>Freq. Absoluta (fi)</th>
+          <th>Freq. Relativa (fr)</th>
+          <th>Porcentagem (%)</th>
+          <th>Ângulo em °</th>
+        </tr>
+        <tr>
+          <td>Calabresa</td>
+          <td>8</td>
+          <td>0.1905</td>
+          <td>19.05%</td>
+          <td>68.58°</td>
+        </tr>
+        <tr>
+          <td>Mussarela</td>
+          <td>12</td>
+          <td>0.2857</td>
+          <td>28.57%</td>
+          <td>102.86°</td>
+        </tr>
+        <tr>
+          <td>Frango com Catupiry</td>
+          <td>5</td>
+          <td>0.1190</td>
+          <td>11.90%</td>
+          <td>42.84°</td>
+        </tr>
+        <tr>
+          <td>Portuguesa</td>
+          <td>10</td>
+          <td>0.2381</td>
+          <td>23.81%</td>
+          <td>85.68°</td>
+        </tr>
+        <tr>
+          <td>Quatro Queijos</td>
+          <td>7</td>
+          <td>0.1667</td>
+          <td>16.67%</td>
+          <td>60.12°</td>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th>42</th>
+          <th>1</th>
+          <th>100%</th>
+          <th>360°</th>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>

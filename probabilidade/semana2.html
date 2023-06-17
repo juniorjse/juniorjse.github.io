@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Intro. prob.</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 10px;
+        z-index: 999;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .navbar li {
+        margin: 0 10px;
+      }
+
+      .navbar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .navbar a:hover {
+        color: #4caf50;
+      }
+
+      .screen {
+        max-width: 800px;
+        margin: 70px auto 20px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      .chart-container {
+        text-align: center;
+        max-width: 100%;
+        height: auto;
+      }
+
+      .text-container {
+        margin-top: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="navbar">
+      <ul>
+        <li><a href="semana1.html">Semana 1</a></li>
+        <li><a href="semana2.html">Semana 2</a></li>
+        <li><a href="semana3.html">Semana 3</a></li>
+      </ul>
+    </div>
+
+    <div id="screen" class="screen active">
+      <!-- Tabela e gráfico da Semana 1 -->
+      <div class="text-container">
+        <h3>Exemplo de Faixa Salarial</h3>
+        <p>
+          Este histograma mostra a distribuição da faixa salarial dos
+          funcionários em uma empresa. Ele oferece uma representação visual dos
+          dados coletados, permitindo-nos entender melhor como os salários estão
+          distribuídos entre os funcionários.
+        </p>
+        <p>
+          As barras do histograma representam a frequência das faixas salariais.
+          Quanto mais alta a barra, maior é a frequência de funcionários com
+          salários naquela faixa.
+        </p>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="salary-chart"></canvas>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Faixa Salarial</th>
+            <th>Frequência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1.000 - 2.000</td>
+            <td>8</td>
+          </tr>
+          <tr>
+            <td>2.001 - 3.000</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>3.001 - 4.000</td>
+            <td>15</td>
+          </tr>
+          <tr>
+            <td>4.001 - 5.000</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>5.001 - 6.000</td>
+            <td>5</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Tabela e gráfico da Semana 2 -->
+      <div class="text-container">
+        <h3>Exemplo de Histograma</h3>
+        <p>
+          Este histograma mostra a distribuição de dados de altura de uma
+          população. Cada barra representa um intervalo de altura e a altura da
+          barra indica a frequência de indivíduos dentro desse intervalo.
+        </p>
+        <p>
+          O histograma nos ajuda a visualizar como as alturas estão distribuídas
+          e identificar qualquer padrão ou tendência nos dados.
+        </p>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="height-chart"></canvas>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Intervalo de Altura</th>
+            <th>Frequência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>150 - 160 cm</td>
+            <td>10</td>
+          </tr>
+          <tr>
+            <td>161 - 170 cm</td>
+            <td>15</td>
+          </tr>
+          <tr>
+            <td>171 - 180 cm</td>
+            <td>20</td>
+          </tr>
+          <tr>
+            <td>181 - 190 cm</td>
+            <td>18</td>
+          </tr>
+          <tr>
+            <td>191 - 200 cm</td>
+            <td>12</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Dados do primeiro histograma (Salário)
+      const salaryData = {
+        labels: [
+          '1.000 - 2.000',
+          '2.001 - 3.000',
+          '3.001 - 4.000',
+          '4.001 - 5.000',
+          '5.001 - 6.000'
+        ],
+        datasets: [
+          {
+            label: 'Frequência',
+            data: [8, 12, 15, 10, 5],
+            backgroundColor: 'rgba(75, 192, 192, 0.8)',
+            borderWidth: 1
+          }
+        ]
+      }
+
+      // Dados do segundo histograma (Altura)
+      const heightData = {
+        labels: [
+          '150 - 160 cm',
+          '161 - 170 cm',
+          '171 - 180 cm',
+          '181 - 190 cm',
+          '191 - 200 cm'
+        ],
+        datasets: [
+          {
+            label: 'Frequência',
+            data: [10, 15, 20, 18, 12],
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            borderWidth: 1
+          }
+        ]
+      }
+
+      // Opções de exibição dos gráficos
+      const chartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            beginAtZero: true
+          },
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+
+      // Renderizar os gráficos
+      const salaryChart = new Chart(document.getElementById('salary-chart'), {
+        type: 'bar',
+        data: salaryData,
+        options: chartOptions
+      })
+
+      const heightChart = new Chart(document.getElementById('height-chart'), {
+        type: 'bar',
+        data: heightData,
+        options: chartOptions
+      })
+
+      // Alternar entre as telas
+      const screen = document.getElementById('screen')
+      const navBtn = document.getElementById('nav-btn')
+
+      navBtn.addEventListener('click', () => {
+        screen.classList.toggle('active')
+      })
+    </script>
+  </body>
+</html>

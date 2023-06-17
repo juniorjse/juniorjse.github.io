@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Intro. prob.</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f0f0f0;
+        color: #333;
+      }
+
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 10px;
+        z-index: 999;
+      }
+
+      .navbar ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .navbar li {
+        margin: 0 10px;
+      }
+
+      .navbar a {
+        text-decoration: none;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .navbar a:hover {
+        color: #4caf50;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 90px auto 20px;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .title {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .step {
+        margin-bottom: 30px;
+      }
+
+      .step-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+      }
+
+      .explanation {
+        margin-bottom: 10px;
+      }
+
+      .result {
+        font-weight: bold;
+      }
+    </style>
+    <!-- Biblioteca para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.26.0/dist/apexcharts.min.js"></script>
+  </head>
+  <body>
+    <div class="navbar">
+      <ul>
+        <li><a href="semana1.html">Semana 1</a></li>
+        <li><a href="semana2.html">Semana 2</a></li>
+        <li><a href="semana3.html">Semana 3</a></li>
+      </ul>
+    </div>
+
+    <div class="container">
+      <div class="title">
+        Análise bidimensional
+      </div>
+
+      <div class="step">
+        <div class="step-title">Passo 1: Diagrama de Dispersão</div>
+        <div class="chart-container" id="scatter-chart"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">Passo 2: Dependência Linear</div>
+        <div class="explanation">
+          Com base no diagrama de dispersão, analise visualmente se existe uma
+          dependência linear entre as duas variáveis. Observe a tendência dos
+          pontos no gráfico e a possível formação de uma linha reta.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">Passo 3: Coeficiente de Correlação</div>
+        <div class="explanation">
+          Calcule o coeficiente de correlação para quantificar a relação entre
+          as variáveis. Utilize uma medida como o coeficiente de correlação de
+          Pearson, que varia de -1 a 1. Um valor próximo de 1 indica uma
+          correlação positiva forte, enquanto um valor próximo de -1 indica uma
+          correlação negativa forte. Um valor próximo de 0 indica uma correlação
+          fraca ou inexistente.
+        </div>
+        <div class="result">O coeficiente de correlação é: 0.712</div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">
+          Passo 4: Região com Comportamento Diferente
+        </div>
+        <div class="explanation">
+          Verifique se alguma região apresenta um comportamento atípico em
+          relação às demais. Se houver, elimine o valor correspondente dessa
+          região e recalcule o coeficiente de correlação.
+        </div>
+        <div class="result">
+          Após a eliminação do valor de "Fortaleza", o novo coeficiente de
+          correlação é: 0.805
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="step-title">Passo 5: Conclusão</div>
+        <div class="explanation">
+          Com base nos dados e nos cálculos realizados, podemos concluir que
+          existe uma correlação positiva moderada entre a porcentagem da
+          população economicamente ativa empregada no setor primário e o índice
+          de analfabetismo nas regiões metropolitanas brasileiras estudadas. No
+          entanto, é importante destacar que a correlação não implica
+          causalidade, ou seja, não podemos afirmar que uma variável causa
+          diretamente a outra.
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Dados para o diagrama de dispersão
+      const data = [
+        { x: 2.0, y: 17.5 },
+        { x: 2.5, y: 18.5 },
+        { x: 2.9, y: 19.5 },
+        { x: 3.3, y: 22.2 },
+        { x: 4.1, y: 26.5 },
+        { x: 4.3, y: 16.6 },
+        { x: 7.0, y: 36.6 },
+        { x: 13.0, y: 38.4 }
+      ]
+
+      // Configurações do gráfico de dispersão
+      const options = {
+        chart: {
+          type: 'scatter',
+          height: 350,
+          zoom: {
+            enabled: false
+          }
+        },
+        series: [
+          {
+            name: 'Relacionamento',
+            data: data
+          }
+        ],
+        xaxis: {
+          title: {
+            text: 'Setor Primário'
+          }
+        },
+        yaxis: {
+          title: {
+            text: 'Índice de Analfabetismo'
+          }
+        }
+      }
+
+      // Renderiza o gráfico de dispersão
+      const chart = new ApexCharts(
+        document.querySelector('#scatter-chart'),
+        options
+      )
+      chart.render()
+    </script>
+  </body>
+</html>
