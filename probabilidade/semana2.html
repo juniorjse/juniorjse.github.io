@@ -51,11 +51,13 @@
         padding: 20px;
         border-radius: 10px;
       }
-
       .chart-container {
         text-align: center;
-        max-width: 100%;
-        height: auto;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        box-sizing: border-box;
       }
 
       .text-container {
@@ -208,7 +210,8 @@
             label: 'Frequência',
             data: [8, 12, 15, 10, 5],
             backgroundColor: 'rgba(75, 192, 192, 0.8)',
-            borderWidth: 1
+            borderWidth: 1,
+            barPercentage: 1.27,
           }
         ]
       }
@@ -227,7 +230,8 @@
             label: 'Frequência',
             data: [10, 15, 20, 18, 12],
             backgroundColor: 'rgba(54, 162, 235, 0.8)',
-            borderWidth: 1
+            borderWidth: 1,
+            barPercentage: 1.27,
           }
         ]
       }
