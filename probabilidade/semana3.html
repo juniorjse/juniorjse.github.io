@@ -12,6 +12,16 @@
         color: #333;
       }
 
+      .apexcharts-xaxis-labels,
+      .apexcharts-yaxis-labels {
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+      }
+
+      .apexcharts-gridline.apexcharts-xaxis-gridline {
+        stroke-dasharray: 2;
+      }
+
       .navbar {
         position: fixed;
         top: 0;
@@ -90,9 +100,7 @@
     </div>
 
     <div class="container">
-      <div class="title">
-        Análise bidimensional
-      </div>
+      <div class="title">Análise bidimensional</div>
 
       <div class="step">
         <div class="step-title">Passo 1: Diagrama de Dispersão</div>
@@ -163,6 +171,19 @@
         { x: 13.0, y: 38.4 }
       ]
 
+      // Coeficientes da reta de regressão linear
+      const slope = 3.5
+      const intercept = 8
+
+      // Dados para a reta de regressão linear
+      const regressionLineData = [
+        { x: 0, y: intercept },
+        {
+          x: Math.max(...data.map(point => point.x)),
+          y: slope * Math.max(...data.map(point => point.x)) + intercept
+        }
+      ]
+
       // Configurações do gráfico de dispersão
       const options = {
         chart: {
@@ -176,6 +197,10 @@
           {
             name: 'Relacionamento',
             data: data
+          },
+          {
+            name: 'Reta de Regressão',
+            data: regressionLineData
           }
         ],
         xaxis: {
