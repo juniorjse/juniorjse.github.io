@@ -1,4 +1,4 @@
-var messageArray = ['Desenvolvedor junior.'];
+var messageArray = ['DevOps, web development, and game development.'];
 var textPosition = 0;
 var speed = 70;
 
