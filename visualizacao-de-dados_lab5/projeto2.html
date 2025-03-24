@@ -1,0 +1,109 @@
+<!--
+	THIS EXAMPLE WAS DOWNLOADED FROM https://echarts.apache.org/examples/en/editor.html?c=bar-simple&code=PYBwLglsB2AEC8sDeAoWtJgDYFMBcya6GOAHmAQOQBqAhgE4S0DnAx8LACa2wDGAFgFcAbj1q9BAW0FZa3WCGD1YtaBwAUAJgAMARgAsK2Ds0BmAJSUANEXQBnQQCMwZCrEoAxWgC8c0eQDCDNC0AF-OPAC0sAAqtCA49MAAh7DRAAoAQta2sLgAZm6UvH4u9JREAL426GDAwFiQIASoxBiMAOYdiVS0pBB2OW35SpK0YGUE-YLQvJAw6iAMtJJ25oRt6KLKdhAhWAgKy6sA2toAugB0oliCOLAAfIjasAD87gDUlLBUlADcuXQ9BwYEE9DgS3oKzsZyuIUk9w-7iosCRu32qKOUNOF2utFuiPcsEkkn-uUqVRqGHqWEcwFILVy-Rw4zB-A2m24YFoAC16pIWrAAJ4AQX6dgAkv4yFQ1NAcN9qoDYMC7HVgS0lZtYHZaMIcCLJWNupryZSiKQxQNGW0wEKElReOMcB0lEKhsQubQCCcdAYrMY9ABWAN-gBsob0AHZI7oAByxgCckZ0Kd0Kc0KdM5yp6Hh7MoIrUFXQWuFVrsNuIdod7hudw9eZWBbojBY7Fg6hJlnN9kSEBwldgJ1yrU5429w90mn0lwjaV0UcuybSid0lxjaTjpkuIdgQaDO9MAcimjDYeXAcTO_0J5MlwT-6D2ku6bSQbDmkuF1z1ftBYicpf3QCAXEkABlO1cCrbVeAaJQphmOYoGgRZjjWDltXQAB6bDYBFbwZCxMQpFKDhOHuAQRFoAN9XoBEsH4DhIR4TgIEkPZBAgNhgGVNoIHyTsWNWPECUeZ51jHLDiFw2ApRcaBdm4CiuHuHwiNoUjoG5PhgEkWAbiUYlaCgeg-M2bZjNIdJgF2SB9UOA8jz-HC8LGUyDPxIzFDsiBhF46S2ksvYFLsoVDjQ7E7FEu5YDcvobN8_V1gAKlgF8o0xF9TABQLiGBUFwXcegOgidQwz3XRtD3TRND3b4kRCvwwsxShLBcuK8IAJWAIV8UyAlzNLWAcCwOx7ikwLZPk5qIGU-4VLohimJULSdLg_TDOUdy7FgeUOnGPyAryzztr6AA5F1DocxBIg_L9tA62T3KMra9qu-zjry4LtNmu0IuE6L63ueLSEug77JwVL0o3LLLhyob8pBME4EoEqytq7RIwDMMsaJRrfsU0DwqRNr_lc2AAkYVYYERilpPpzZGdLIgcyIL0-T0n1Rwwf8qD2JSFVgMt0CQXna0oOwsDmxJFVZqlhAGQR8QAWXiGDxYLODtM44BBEGX8OOgAg7s_b9Db6AgnPh389i61QTWQWBQHEYmCF0YXfz1sAAHl8nt6BHbFl3eDdmHNE93JtbAJIsFwegNZA6AA6D3SsAQ4dKAAYgCAARIMAgL6x3Cz_QwzjTRMn0ShzmF8lfxccgfUoFXklIYuW4AW-gGvfwKIpOn4MBGz4fEJFkRxoPaO4qhQSo_iAA
+	⚠ Please be aware that this chart is not an official demo of Apache ECharts but is made by user-generated code.
+-->
+<!DOCTYPE html>
+<html lang="en" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  
+  <!-- Uncomment this line if you want to dataTool extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/extension/dataTool.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use gl extension
+  <script type="text/javascript" src="https://echarts.apache.org/en/js/vendors/echarts-gl/dist/echarts-gl.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-stat extension
+  <script type="text/javascript" src="https://echarts.apache.org/en/js/vendors/echarts-stat/dist/ecStat.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-graph-modularity extension
+  <script type="text/javascript" src="https://echarts.apache.org/en/js/vendors/echarts-graph-modularity/dist/echarts-graph-modularity.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use map
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"></script>
+  -->
+  <!-- Uncomment these two lines if you want to use bmap extension
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=YOUR_API_KEY"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5/dist/extension/bmap.min.js"></script>
+  -->
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+    
+    var option;
+
+    option = {
+      title: {
+        text: 'Variação da chuva acumulada por ano (2014 a 2023)',
+        subtext: 'Fazenda Carnaúba - Taperoá - PB',
+        left: 'center'
+      },
+      tooltip: {
+        trigger: 'axis',
+        formatter: function(params) {
+          var sinal = params[0].value >= 0 ? '+' : '';
+          return params[0].name + ': ' + sinal + params[0].value + ' mm';
+        }
+      },
+      toolbox: {
+        feature: {
+          dataZoom: { yAxisIndex: 'none' },
+          restore: {},
+          saveAsImage: {}
+        }
+      },
+      xAxis: {
+        type: 'category',
+        data: [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023],
+        name: 'Ano'
+      },
+      yAxis: {
+        type: 'value',
+        name: 'Variação (mm)'
+      },
+      series: [
+        {
+          data: [124.6, -17.9, -91.7, -83.5, 553.3, -266.9, 93.4, -202.8, 550.1, -562.0],
+          type: 'bar'
+        }
+      ],
+      visualMap: {
+        type: 'continuous',
+        min: -562.0,
+        max: 553.3,
+        inRange: {
+          color: ['#CD5C5C', '#FFFFFF', '#4682B4']
+        },
+        outOfRange: { 
+          color: '#888888',
+          opacity: 0.3 
+        },
+        text: ['Máx', 'Mín'],
+        left: 'right',
+        calculable: true
+      },
+      dataZoom: [
+        { type: 'inside' },
+        { type: 'slider' }
+      ]
+    };
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>
