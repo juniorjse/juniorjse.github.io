@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="pt-br" style="height: 100%">
+<head>
+  <meta charset="UTF-8" />
+  <title>Projeto de Visualização Interativa de Dados</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0071e3;
+      --background-color: #f5f5f7;
+      --text-color: #1d1d1f;
+      --border-color: #d2d2d7;
+      --card-background: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1170px;
+      margin: 0 auto;
+      padding: 10px;
+    }
+
+    .header {
+      background-color: var(--card-background);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      width: calc(100% - 30px);
+    }
+
+    .header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: var(--text-color);
+    }
+
+    .header p {
+      font-size: 14px;
+      color: var(--text-color);
+    }
+
+    .controls {
+      background-color: var(--card-background);
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: calc(100% - 30px);
+    }
+
+    .controls label {
+      font-weight: 500;
+      color: var(--text-color);
+      white-space: nowrap;
+    }
+
+    .controls select {
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--card-background);
+      font-size: 14px;
+      color: var(--text-color);
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 14px;
+    }
+
+    .map-container {
+      background-color: var(--card-background);
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      position: relative;
+      width: calc(100% - 30px);
+    }
+
+    #main {
+      width: 100%;
+      height: 600px;
+      position: relative;
+    }
+
+    .selection-overlay {
+      position: absolute;
+      top: 60px;
+      left: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px 15px;
+      border-radius: 8px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 280px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .selection-overlay label {
+      font-weight: 500;
+      color: var(--text-color);
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .selection-overlay select {
+      padding: 6px 10px 6px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: var(--card-background);
+      font-size: 13px;
+      color: var(--text-color);
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 3px center;
+      background-size: 12px;
+      min-width: 170px;
+      margin-right: 5px;
+    }
+
+    .tips-overlay {
+      position: absolute;
+      top: 120px;
+      left: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      max-width: 280px;
+    }
+
+    .tips-overlay h3 {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .tips-overlay ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+
+    .tips-overlay li {
+      margin-bottom: 4px;
+      color: #86868b;
+      font-size: 13px;
+      display: flex;
+      align-items: flex-start;
+      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .tips-overlay li:before {
+      content: "•";
+      color: var(--primary-color);
+      margin-right: 6px;
+      margin-top: -1px;
+    }
+
+    .university-info {
+      background-color: var(--card-background);
+      padding: 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      width: calc(100% - 30px);
+    }
+
+    .university-info table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .university-info td {
+      padding: 5px;
+      font-size: 14px;
+      color: var(--text-color);
+    }
+
+    .university-info td:last-child {
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="university-info">
+      <table>
+        <tbody>
+          <tr>
+            <td>UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - UFCG</td>
+            <td>Disciplina: Visualização de Dados (TECC)</td>
+          </tr>
+          <tr>
+            <td>CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA - CEEI</td>
+            <td>Professor: Maxwell Guimarães de Oliveira</td>
+          </tr>
+          <tr>
+            <td>UNIDADE ACADÊMICA DE SISTEMAS E COMPUTAÇÃO - UASC</td>
+            <td>Período: 2024.2</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="header">
+      <h1>Projeto de Visualização Interativa de Dados</h1>
+      <p><u>Grupo G</u>: Huandrey Pontes, Igor Correia, Junior Silva, Thalles Vasconcelos</p>
+      <p style="margin-top: 10px; font-size: 14px; color: #1d1d1f;">
+        Este projeto utiliza uma série histórica de preços de combustíveis no Brasil entre julho e dezembro de 2024, publicada pela ANP.
+        A visualização permite observar variações de preços por estado, ao longo do tempo e entre diferentes tipos de combustíveis.
+        Com isso, conta três histórias principais: disparidades regionais, tendências temporais e comparações entre combustíveis.
+      </p>
+    </div>
+
+    <div class="map-container">
+      <div class="selection-overlay">
+        <label for="combustivel">Combustível:</label>
+        <select id="combustivel">
+          <option value="GASOLINA">Gasolina</option>
+          <option value="ETANOL">Etanol</option>
+          <option value="GASOLINA ADITIVADA">Gasolina aditivada</option>
+          <option value="DIESEL">Diesel</option>
+          <option value="DIESEL S10">Diesel s10</option>
+          <option value="GNV">GNV</option>
+        </select>
+      </div>
+      <div class="tips-overlay">
+        <h3>Dicas de Interação:</h3>
+        <ul>
+          <li>Selecione o combustível no menu acima</li>
+          <li>Passe o mouse sobre os estados para ver os preços</li>
+          <li>Use a linha do tempo abaixo para navegar entre os meses</li>
+        </ul>
+      </div>
+      <div id="main"></div>
+    </div>
+  </div>
+
+  <script>
+    var myChart = echarts.init(document.getElementById('main'));
+    myChart.showLoading();
+
+    const dadosCombustivel = {
+      'GASOLINA' : {
+          'julho': [
+              { name: 'Acre', value: 7.22},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.29},
+              { name: 'Ceará', value: 6.3},
+              { name: 'Distrito Federal', value: 5.98},
+              { name: 'Espírito Santo', value: 6.17},
+              { name: 'Goiás', value: 6.07},
+              { name: 'Tocantins', value: 6.31},
+              { name: 'Maranhão', value: 6.1},
+              { name: 'Minas Gerais', value: 6.05},
+              { name: 'Mato Grosso do Sul', value: 6.08},
+              { name: 'Mato Grosso', value: 5.91},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.08},
+              { name: 'Piauí', value: 5.95},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 5.98},
+              { name: 'Rio Grande do Norte', value: 6.53},
+              { name: 'Rondônia', value: 6.66},
+              { name: 'Roraima', value: 6.3},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.06},
+              { name: 'São Paulo', value: 5.78},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.72},
+              { name: 'Amapá', value: 5.82},
+              { name: 'Sergipe', value: 6.29},
+          ],
+          'agosto': [
+              { name: 'Acre', value: 7.3},
+              { name: 'Alagoas', value: 6.35},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.34},
+              { name: 'Distrito Federal', value: 6.08},
+              { name: 'Espírito Santo', value: 6.25},
+              { name: 'Goiás', value: 5.97},
+              { name: 'Tocantins', value: 6.48},
+              { name: 'Maranhão', value: 6.16},
+              { name: 'Minas Gerais', value: 6.13},
+              { name: 'Mato Grosso do Sul', value: 6.12},
+              { name: 'Mato Grosso', value: 6.01},
+              { name: 'Paraíba', value: 6.15},
+              { name: 'Pernambuco', value: 6.09},
+              { name: 'Piauí', value: 6.04},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 6.05},
+              { name: 'Rio Grande do Norte', value: 6.47},
+              { name: 'Rondônia', value: 6.8},
+              { name: 'Roraima', value: 6.48},
+              { name: 'Rio Grande do Sul', value: 6.17},
+              { name: 'Santa Catarina', value: 6.12},
+              { name: 'São Paulo', value: 5.93},
+              { name: 'Pará', value: 6.26},
+              { name: 'Amazonas', value: 7.02},
+              { name: 'Amapá', value: 5.94},
+              { name: 'Sergipe', value: 6.38},
+          ],
+          'setembro': [
+              { name: 'Acre', value: 7.33},
+              { name: 'Alagoas', value: 6.34},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.2},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.2},
+              { name: 'Goiás', value: 6.13},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.1},
+              { name: 'Mato Grosso do Sul', value: 6.15},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.1},
+              { name: 'Pernambuco', value: 5.99},
+              { name: 'Piauí', value: 6.01},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.19},
+              { name: 'Rondônia', value: 6.79},
+              { name: 'Roraima', value: 6.57},
+              { name: 'Rio Grande do Sul', value: 6.15},
+              { name: 'Santa Catarina', value: 6.09},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.99},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.26},
+          ],
+          'outubro': [
+              { name: 'Acre', value: 7.4},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.15},
+              { name: 'Distrito Federal', value: 6.12},
+              { name: 'Espírito Santo', value: 6.34},
+              { name: 'Goiás', value: 6.18},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.04},
+              { name: 'Minas Gerais', value: 6.08},
+              { name: 'Mato Grosso do Sul', value: 6.09},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.05},
+              { name: 'Piauí', value: 5.99},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.34},
+              { name: 'Rondônia', value: 6.98},
+              { name: 'Roraima', value: 6.73},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.25},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 7.11},
+              { name: 'Amapá', value: 5.9},
+              { name: 'Sergipe', value: 6.06},
+          ],
+          'novembro': [
+              { name: 'Acre', value: 7.51},
+              { name: 'Alagoas', value: 6.24},
+              { name: 'Bahia', value: 6.28},
+              { name: 'Ceará', value: 6.17},
+              { name: 'Distrito Federal', value: 6.14},
+              { name: 'Espírito Santo', value: 6.29},
+              { name: 'Goiás', value: 6.01},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.02},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.1},
+              { name: 'Mato Grosso', value: 6.12},
+              { name: 'Paraíba', value: 5.95},
+              { name: 'Pernambuco', value: 6.11},
+              { name: 'Piauí', value: 5.93},
+              { name: 'Paraná', value: 6.18},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.25},
+              { name: 'Rondônia', value: 7.1},
+              { name: 'Roraima', value: 6.84},
+              { name: 'Rio Grande do Sul', value: 6.09},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.94},
+              { name: 'Pará', value: 6.3},
+              { name: 'Amazonas', value: 7.12},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.04},
+          ],
+          'dezembro': [
+              { name: 'Acre', value: 7.55},
+              { name: 'Alagoas', value: 6.27},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.38},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.19},
+              { name: 'Goiás', value: 6.19},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.11},
+              { name: 'Mato Grosso', value: 6.15},
+              { name: 'Paraíba', value: 5.94},
+              { name: 'Pernambuco', value: 6.15},
+              { name: 'Piauí', value: 5.96},
+              { name: 'Paraná', value: 6.23},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.42},
+              { name: 'Rondônia', value: 7.08},
+              { name: 'Roraima', value: 6.89},
+              { name: 'Rio Grande do Sul', value: 6.1},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.98},
+              { name: 'Pará', value: 6.36},
+              { name: 'Amazonas', value: 7.13},
+              { name: 'Amapá', value: 5.92},
+              { name: 'Sergipe', value: 6.28},
+          ],
+        },
+        'GASOLINA ADITIVADA' : {
+          'julho': [
+              { name: 'Acre', value: 7.22},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.29},
+              { name: 'Ceará', value: 6.3},
+              { name: 'Distrito Federal', value: 5.98},
+              { name: 'Espírito Santo', value: 6.17},
+              { name: 'Goiás', value: 6.07},
+              { name: 'Tocantins', value: 6.31},
+              { name: 'Maranhão', value: 6.1},
+              { name: 'Minas Gerais', value: 6.05},
+              { name: 'Mato Grosso do Sul', value: 6.08},
+              { name: 'Mato Grosso', value: 5.91},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.08},
+              { name: 'Piauí', value: 5.95},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 5.98},
+              { name: 'Rio Grande do Norte', value: 6.53},
+              { name: 'Rondônia', value: 6.66},
+              { name: 'Roraima', value: 6.3},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.06},
+              { name: 'São Paulo', value: 5.78},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.72},
+              { name: 'Amapá', value: 5.82},
+              { name: 'Sergipe', value: 6.29},
+          ],
+          'agosto': [
+              { name: 'Acre', value: 7.3},
+              { name: 'Alagoas', value: 6.35},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.34},
+              { name: 'Distrito Federal', value: 6.08},
+              { name: 'Espírito Santo', value: 6.25},
+              { name: 'Goiás', value: 5.97},
+              { name: 'Tocantins', value: 6.48},
+              { name: 'Maranhão', value: 6.16},
+              { name: 'Minas Gerais', value: 6.13},
+              { name: 'Mato Grosso do Sul', value: 6.12},
+              { name: 'Mato Grosso', value: 6.01},
+              { name: 'Paraíba', value: 6.15},
+              { name: 'Pernambuco', value: 6.09},
+              { name: 'Piauí', value: 6.04},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 6.05},
+              { name: 'Rio Grande do Norte', value: 6.47},
+              { name: 'Rondônia', value: 6.8},
+              { name: 'Roraima', value: 6.48},
+              { name: 'Rio Grande do Sul', value: 6.17},
+              { name: 'Santa Catarina', value: 6.12},
+              { name: 'São Paulo', value: 5.93},
+              { name: 'Pará', value: 6.26},
+              { name: 'Amazonas', value: 7.02},
+              { name: 'Amapá', value: 5.94},
+              { name: 'Sergipe', value: 6.38},
+          ],
+          'setembro': [
+              { name: 'Acre', value: 7.33},
+              { name: 'Alagoas', value: 6.34},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.2},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.2},
+              { name: 'Goiás', value: 6.13},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.1},
+              { name: 'Mato Grosso do Sul', value: 6.15},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.1},
+              { name: 'Pernambuco', value: 5.99},
+              { name: 'Piauí', value: 6.01},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.19},
+              { name: 'Rondônia', value: 6.79},
+              { name: 'Roraima', value: 6.57},
+              { name: 'Rio Grande do Sul', value: 6.15},
+              { name: 'Santa Catarina', value: 6.09},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.99},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.26},
+          ],
+          'outubro': [
+              { name: 'Acre', value: 7.4},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.15},
+              { name: 'Distrito Federal', value: 6.12},
+              { name: 'Espírito Santo', value: 6.34},
+              { name: 'Goiás', value: 6.18},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.04},
+              { name: 'Minas Gerais', value: 6.08},
+              { name: 'Mato Grosso do Sul', value: 6.09},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.05},
+              { name: 'Piauí', value: 5.99},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.34},
+              { name: 'Rondônia', value: 6.98},
+              { name: 'Roraima', value: 6.73},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.25},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 7.11},
+              { name: 'Amapá', value: 5.9},
+              { name: 'Sergipe', value: 6.06},
+          ],
+          'novembro': [
+              { name: 'Acre', value: 7.51},
+              { name: 'Alagoas', value: 6.24},
+              { name: 'Bahia', value: 6.28},
+              { name: 'Ceará', value: 6.17},
+              { name: 'Distrito Federal', value: 6.14},
+              { name: 'Espírito Santo', value: 6.29},
+              { name: 'Goiás', value: 6.01},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.02},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.1},
+              { name: 'Mato Grosso', value: 6.12},
+              { name: 'Paraíba', value: 5.95},
+              { name: 'Pernambuco', value: 6.11},
+              { name: 'Piauí', value: 5.93},
+              { name: 'Paraná', value: 6.18},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.25},
+              { name: 'Rondônia', value: 7.1},
+              { name: 'Roraima', value: 6.84},
+              { name: 'Rio Grande do Sul', value: 6.09},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.94},
+              { name: 'Pará', value: 6.3},
+              { name: 'Amazonas', value: 7.12},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.04},
+          ],
+          'dezembro': [
+              { name: 'Acre', value: 7.55},
+              { name: 'Alagoas', value: 6.27},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.38},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.19},
+              { name: 'Goiás', value: 6.19},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.11},
+              { name: 'Mato Grosso', value: 6.15},
+              { name: 'Paraíba', value: 5.94},
+              { name: 'Pernambuco', value: 6.15},
+              { name: 'Piauí', value: 5.96},
+              { name: 'Paraná', value: 6.23},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.42},
+              { name: 'Rondônia', value: 7.08},
+              { name: 'Roraima', value: 6.89},
+              { name: 'Rio Grande do Sul', value: 6.1},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.98},
+              { name: 'Pará', value: 6.36},
+              { name: 'Amazonas', value: 7.13},
+              { name: 'Amapá', value: 5.92},
+              { name: 'Sergipe', value: 6.28},
+          ],
+        },
+        'DIESEL' : {
+          'julho': [
+              { name: 'Acre', value: 7.22},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.29},
+              { name: 'Ceará', value: 6.3},
+              { name: 'Distrito Federal', value: 5.98},
+              { name: 'Espírito Santo', value: 6.17},
+              { name: 'Goiás', value: 6.07},
+              { name: 'Tocantins', value: 6.31},
+              { name: 'Maranhão', value: 6.1},
+              { name: 'Minas Gerais', value: 6.05},
+              { name: 'Mato Grosso do Sul', value: 6.08},
+              { name: 'Mato Grosso', value: 5.91},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.08},
+              { name: 'Piauí', value: 5.95},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 5.98},
+              { name: 'Rio Grande do Norte', value: 6.53},
+              { name: 'Rondônia', value: 6.66},
+              { name: 'Roraima', value: 6.3},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.06},
+              { name: 'São Paulo', value: 5.78},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.72},
+              { name: 'Amapá', value: 5.82},
+              { name: 'Sergipe', value: 6.29},
+          ],
+          'agosto': [
+              { name: 'Acre', value: 7.3},
+              { name: 'Alagoas', value: 6.35},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.34},
+              { name: 'Distrito Federal', value: 6.08},
+              { name: 'Espírito Santo', value: 6.25},
+              { name: 'Goiás', value: 5.97},
+              { name: 'Tocantins', value: 6.48},
+              { name: 'Maranhão', value: 6.16},
+              { name: 'Minas Gerais', value: 6.13},
+              { name: 'Mato Grosso do Sul', value: 6.12},
+              { name: 'Mato Grosso', value: 6.01},
+              { name: 'Paraíba', value: 6.15},
+              { name: 'Pernambuco', value: 6.09},
+              { name: 'Piauí', value: 6.04},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 6.05},
+              { name: 'Rio Grande do Norte', value: 6.47},
+              { name: 'Rondônia', value: 6.8},
+              { name: 'Roraima', value: 6.48},
+              { name: 'Rio Grande do Sul', value: 6.17},
+              { name: 'Santa Catarina', value: 6.12},
+              { name: 'São Paulo', value: 5.93},
+              { name: 'Pará', value: 6.26},
+              { name: 'Amazonas', value: 7.02},
+              { name: 'Amapá', value: 5.94},
+              { name: 'Sergipe', value: 6.38},
+          ],
+          'setembro': [
+              { name: 'Acre', value: 7.33},
+              { name: 'Alagoas', value: 6.34},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.2},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.2},
+              { name: 'Goiás', value: 6.13},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.1},
+              { name: 'Mato Grosso do Sul', value: 6.15},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.1},
+              { name: 'Pernambuco', value: 5.99},
+              { name: 'Piauí', value: 6.01},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.19},
+              { name: 'Rondônia', value: 6.79},
+              { name: 'Roraima', value: 6.57},
+              { name: 'Rio Grande do Sul', value: 6.15},
+              { name: 'Santa Catarina', value: 6.09},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.99},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.26},
+          ],
+          'outubro': [
+              { name: 'Acre', value: 7.4},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.15},
+              { name: 'Distrito Federal', value: 6.12},
+              { name: 'Espírito Santo', value: 6.34},
+              { name: 'Goiás', value: 6.18},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.04},
+              { name: 'Minas Gerais', value: 6.08},
+              { name: 'Mato Grosso do Sul', value: 6.09},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.05},
+              { name: 'Piauí', value: 5.99},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.34},
+              { name: 'Rondônia', value: 6.98},
+              { name: 'Roraima', value: 6.73},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.25},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 7.11},
+              { name: 'Amapá', value: 5.9},
+              { name: 'Sergipe', value: 6.06},
+          ],
+          'novembro': [
+              { name: 'Acre', value: 7.51},
+              { name: 'Alagoas', value: 6.24},
+              { name: 'Bahia', value: 6.28},
+              { name: 'Ceará', value: 6.17},
+              { name: 'Distrito Federal', value: 6.14},
+              { name: 'Espírito Santo', value: 6.29},
+              { name: 'Goiás', value: 6.01},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.02},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.1},
+              { name: 'Mato Grosso', value: 6.12},
+              { name: 'Paraíba', value: 5.95},
+              { name: 'Pernambuco', value: 6.11},
+              { name: 'Piauí', value: 5.93},
+              { name: 'Paraná', value: 6.18},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.25},
+              { name: 'Rondônia', value: 7.1},
+              { name: 'Roraima', value: 6.84},
+              { name: 'Rio Grande do Sul', value: 6.09},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.94},
+              { name: 'Pará', value: 6.3},
+              { name: 'Amazonas', value: 7.12},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.04},
+          ],
+          'dezembro': [
+              { name: 'Acre', value: 7.55},
+              { name: 'Alagoas', value: 6.27},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.38},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.19},
+              { name: 'Goiás', value: 6.19},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.11},
+              { name: 'Mato Grosso', value: 6.15},
+              { name: 'Paraíba', value: 5.94},
+              { name: 'Pernambuco', value: 6.15},
+              { name: 'Piauí', value: 5.96},
+              { name: 'Paraná', value: 6.23},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.42},
+              { name: 'Rondônia', value: 7.08},
+              { name: 'Roraima', value: 6.89},
+              { name: 'Rio Grande do Sul', value: 6.1},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.98},
+              { name: 'Pará', value: 6.36},
+              { name: 'Amazonas', value: 7.13},
+              { name: 'Amapá', value: 5.92},
+              { name: 'Sergipe', value: 6.28},
+          ],
+        },
+        'DIESEL S10' : {
+          'julho': [
+              { name: 'Acre', value: 7.22},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.29},
+              { name: 'Ceará', value: 6.3},
+              { name: 'Distrito Federal', value: 5.98},
+              { name: 'Espírito Santo', value: 6.17},
+              { name: 'Goiás', value: 6.07},
+              { name: 'Tocantins', value: 6.31},
+              { name: 'Maranhão', value: 6.1},
+              { name: 'Minas Gerais', value: 6.05},
+              { name: 'Mato Grosso do Sul', value: 6.08},
+              { name: 'Mato Grosso', value: 5.91},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.08},
+              { name: 'Piauí', value: 5.95},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 5.98},
+              { name: 'Rio Grande do Norte', value: 6.53},
+              { name: 'Rondônia', value: 6.66},
+              { name: 'Roraima', value: 6.3},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.06},
+              { name: 'São Paulo', value: 5.78},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.72},
+              { name: 'Amapá', value: 5.82},
+              { name: 'Sergipe', value: 6.29},
+          ],
+          'agosto': [
+              { name: 'Acre', value: 7.3},
+              { name: 'Alagoas', value: 6.35},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.34},
+              { name: 'Distrito Federal', value: 6.08},
+              { name: 'Espírito Santo', value: 6.25},
+              { name: 'Goiás', value: 5.97},
+              { name: 'Tocantins', value: 6.48},
+              { name: 'Maranhão', value: 6.16},
+              { name: 'Minas Gerais', value: 6.13},
+              { name: 'Mato Grosso do Sul', value: 6.12},
+              { name: 'Mato Grosso', value: 6.01},
+              { name: 'Paraíba', value: 6.15},
+              { name: 'Pernambuco', value: 6.09},
+              { name: 'Piauí', value: 6.04},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 6.05},
+              { name: 'Rio Grande do Norte', value: 6.47},
+              { name: 'Rondônia', value: 6.8},
+              { name: 'Roraima', value: 6.48},
+              { name: 'Rio Grande do Sul', value: 6.17},
+              { name: 'Santa Catarina', value: 6.12},
+              { name: 'São Paulo', value: 5.93},
+              { name: 'Pará', value: 6.26},
+              { name: 'Amazonas', value: 7.02},
+              { name: 'Amapá', value: 5.94},
+              { name: 'Sergipe', value: 6.38},
+          ],
+          'setembro': [
+              { name: 'Acre', value: 7.33},
+              { name: 'Alagoas', value: 6.34},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.2},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.2},
+              { name: 'Goiás', value: 6.13},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.1},
+              { name: 'Mato Grosso do Sul', value: 6.15},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.1},
+              { name: 'Pernambuco', value: 5.99},
+              { name: 'Piauí', value: 6.01},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.19},
+              { name: 'Rondônia', value: 6.79},
+              { name: 'Roraima', value: 6.57},
+              { name: 'Rio Grande do Sul', value: 6.15},
+              { name: 'Santa Catarina', value: 6.09},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.99},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.26},
+          ],
+          'outubro': [
+              { name: 'Acre', value: 7.4},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.15},
+              { name: 'Distrito Federal', value: 6.12},
+              { name: 'Espírito Santo', value: 6.34},
+              { name: 'Goiás', value: 6.18},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.04},
+              { name: 'Minas Gerais', value: 6.08},
+              { name: 'Mato Grosso do Sul', value: 6.09},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.05},
+              { name: 'Piauí', value: 5.99},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.34},
+              { name: 'Rondônia', value: 6.98},
+              { name: 'Roraima', value: 6.73},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.25},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 7.11},
+              { name: 'Amapá', value: 5.9},
+              { name: 'Sergipe', value: 6.06},
+          ],
+          'novembro': [
+              { name: 'Acre', value: 7.51},
+              { name: 'Alagoas', value: 6.24},
+              { name: 'Bahia', value: 6.28},
+              { name: 'Ceará', value: 6.17},
+              { name: 'Distrito Federal', value: 6.14},
+              { name: 'Espírito Santo', value: 6.29},
+              { name: 'Goiás', value: 6.01},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.02},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.1},
+              { name: 'Mato Grosso', value: 6.12},
+              { name: 'Paraíba', value: 5.95},
+              { name: 'Pernambuco', value: 6.11},
+              { name: 'Piauí', value: 5.93},
+              { name: 'Paraná', value: 6.18},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.25},
+              { name: 'Rondônia', value: 7.1},
+              { name: 'Roraima', value: 6.84},
+              { name: 'Rio Grande do Sul', value: 6.09},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.94},
+              { name: 'Pará', value: 6.3},
+              { name: 'Amazonas', value: 7.12},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.04},
+          ],
+          'dezembro': [
+              { name: 'Acre', value: 7.55},
+              { name: 'Alagoas', value: 6.27},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.38},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.19},
+              { name: 'Goiás', value: 6.19},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.11},
+              { name: 'Mato Grosso', value: 6.15},
+              { name: 'Paraíba', value: 5.94},
+              { name: 'Pernambuco', value: 6.15},
+              { name: 'Piauí', value: 5.96},
+              { name: 'Paraná', value: 6.23},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.42},
+              { name: 'Rondônia', value: 7.08},
+              { name: 'Roraima', value: 6.89},
+              { name: 'Rio Grande do Sul', value: 6.1},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.98},
+              { name: 'Pará', value: 6.36},
+              { name: 'Amazonas', value: 7.13},
+              { name: 'Amapá', value: 5.92},
+              { name: 'Sergipe', value: 6.28},
+          ],
+        },
+        'ETANOL' : {
+          'julho': [
+              { name: 'Acre', value: 7.22},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.29},
+              { name: 'Ceará', value: 6.3},
+              { name: 'Distrito Federal', value: 5.98},
+              { name: 'Espírito Santo', value: 6.17},
+              { name: 'Goiás', value: 6.07},
+              { name: 'Tocantins', value: 6.31},
+              { name: 'Maranhão', value: 6.1},
+              { name: 'Minas Gerais', value: 6.05},
+              { name: 'Mato Grosso do Sul', value: 6.08},
+              { name: 'Mato Grosso', value: 5.91},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.08},
+              { name: 'Piauí', value: 5.95},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 5.98},
+              { name: 'Rio Grande do Norte', value: 6.53},
+              { name: 'Rondônia', value: 6.66},
+              { name: 'Roraima', value: 6.3},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.06},
+              { name: 'São Paulo', value: 5.78},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.72},
+              { name: 'Amapá', value: 5.82},
+              { name: 'Sergipe', value: 6.29},
+          ],
+          'agosto': [
+              { name: 'Acre', value: 7.3},
+              { name: 'Alagoas', value: 6.35},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.34},
+              { name: 'Distrito Federal', value: 6.08},
+              { name: 'Espírito Santo', value: 6.25},
+              { name: 'Goiás', value: 5.97},
+              { name: 'Tocantins', value: 6.48},
+              { name: 'Maranhão', value: 6.16},
+              { name: 'Minas Gerais', value: 6.13},
+              { name: 'Mato Grosso do Sul', value: 6.12},
+              { name: 'Mato Grosso', value: 6.01},
+              { name: 'Paraíba', value: 6.15},
+              { name: 'Pernambuco', value: 6.09},
+              { name: 'Piauí', value: 6.04},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 6.05},
+              { name: 'Rio Grande do Norte', value: 6.47},
+              { name: 'Rondônia', value: 6.8},
+              { name: 'Roraima', value: 6.48},
+              { name: 'Rio Grande do Sul', value: 6.17},
+              { name: 'Santa Catarina', value: 6.12},
+              { name: 'São Paulo', value: 5.93},
+              { name: 'Pará', value: 6.26},
+              { name: 'Amazonas', value: 7.02},
+              { name: 'Amapá', value: 5.94},
+              { name: 'Sergipe', value: 6.38},
+          ],
+          'setembro': [
+              { name: 'Acre', value: 7.33},
+              { name: 'Alagoas', value: 6.34},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.2},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.2},
+              { name: 'Goiás', value: 6.13},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.1},
+              { name: 'Mato Grosso do Sul', value: 6.15},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.1},
+              { name: 'Pernambuco', value: 5.99},
+              { name: 'Piauí', value: 6.01},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.19},
+              { name: 'Rondônia', value: 6.79},
+              { name: 'Roraima', value: 6.57},
+              { name: 'Rio Grande do Sul', value: 6.15},
+              { name: 'Santa Catarina', value: 6.09},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 6.99},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.26},
+          ],
+          'outubro': [
+              { name: 'Acre', value: 7.4},
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.15},
+              { name: 'Distrito Federal', value: 6.12},
+              { name: 'Espírito Santo', value: 6.34},
+              { name: 'Goiás', value: 6.18},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.04},
+              { name: 'Minas Gerais', value: 6.08},
+              { name: 'Mato Grosso do Sul', value: 6.09},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.05},
+              { name: 'Piauí', value: 5.99},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.34},
+              { name: 'Rondônia', value: 6.98},
+              { name: 'Roraima', value: 6.73},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.25},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Pará', value: 6.23},
+              { name: 'Amazonas', value: 7.11},
+              { name: 'Amapá', value: 5.9},
+              { name: 'Sergipe', value: 6.06},
+          ],
+          'novembro': [
+              { name: 'Acre', value: 7.51},
+              { name: 'Alagoas', value: 6.24},
+              { name: 'Bahia', value: 6.28},
+              { name: 'Ceará', value: 6.17},
+              { name: 'Distrito Federal', value: 6.14},
+              { name: 'Espírito Santo', value: 6.29},
+              { name: 'Goiás', value: 6.01},
+              { name: 'Tocantins', value: 6.43},
+              { name: 'Maranhão', value: 6.02},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.1},
+              { name: 'Mato Grosso', value: 6.12},
+              { name: 'Paraíba', value: 5.95},
+              { name: 'Pernambuco', value: 6.11},
+              { name: 'Piauí', value: 5.93},
+              { name: 'Paraná', value: 6.18},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.25},
+              { name: 'Rondônia', value: 7.1},
+              { name: 'Roraima', value: 6.84},
+              { name: 'Rio Grande do Sul', value: 6.09},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.94},
+              { name: 'Pará', value: 6.3},
+              { name: 'Amazonas', value: 7.12},
+              { name: 'Amapá', value: 5.93},
+              { name: 'Sergipe', value: 6.04},
+          ],
+          'dezembro': [
+              { name: 'Acre', value: 7.55},
+              { name: 'Alagoas', value: 6.27},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.38},
+              { name: 'Distrito Federal', value: 6.03},
+              { name: 'Espírito Santo', value: 6.19},
+              { name: 'Goiás', value: 6.19},
+              { name: 'Tocantins', value: 6.45},
+              { name: 'Maranhão', value: 6.12},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.11},
+              { name: 'Mato Grosso', value: 6.15},
+              { name: 'Paraíba', value: 5.94},
+              { name: 'Pernambuco', value: 6.15},
+              { name: 'Piauí', value: 5.96},
+              { name: 'Paraná', value: 6.23},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.42},
+              { name: 'Rondônia', value: 7.08},
+              { name: 'Roraima', value: 6.89},
+              { name: 'Rio Grande do Sul', value: 6.1},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.98},
+              { name: 'Pará', value: 6.36},
+              { name: 'Amazonas', value: 7.13},
+              { name: 'Amapá', value: 5.92},
+              { name: 'Sergipe', value: 6.28},
+          ],
+        },
+        'GNV' : {
+          'julho': [
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.29},
+              { name: 'Ceará', value: 6.3},
+              { name: 'Espírito Santo', value: 6.17},
+              { name: 'Minas Gerais', value: 6.05},
+              { name: 'Mato Grosso do Sul', value: 6.08},
+              { name: 'Mato Grosso', value: 5.91},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.08},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 5.98},
+              { name: 'Rio Grande do Norte', value: 6.53},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.06},
+              { name: 'São Paulo', value: 5.78},
+              { name: 'Amazonas', value: 6.72},
+              { name: 'Sergipe', value: 6.29},
+          ],
+          'agosto': [
+              { name: 'Alagoas', value: 6.35},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.34},
+              { name: 'Espírito Santo', value: 6.25},
+              { name: 'Minas Gerais', value: 6.13},
+              { name: 'Mato Grosso do Sul', value: 6.12},
+              { name: 'Mato Grosso', value: 6.01},
+              { name: 'Paraíba', value: 6.15},
+              { name: 'Pernambuco', value: 6.09},
+              { name: 'Paraná', value: 6.11},
+              { name: 'Rio de Janeiro', value: 6.05},
+              { name: 'Rio Grande do Norte', value: 6.47},
+              { name: 'Rio Grande do Sul', value: 6.17},
+              { name: 'Santa Catarina', value: 6.12},
+              { name: 'São Paulo', value: 5.93},
+              { name: 'Amazonas', value: 7.02},
+              { name: 'Sergipe', value: 6.38},
+          ],
+          'setembro': [
+              { name: 'Alagoas', value: 6.34},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.2},
+              { name: 'Espírito Santo', value: 6.2},
+              { name: 'Minas Gerais', value: 6.1},
+              { name: 'Mato Grosso do Sul', value: 6.15},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.1},
+              { name: 'Pernambuco', value: 5.99},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.19},
+              { name: 'Rio Grande do Sul', value: 6.15},
+              { name: 'Santa Catarina', value: 6.09},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Amazonas', value: 6.99},
+              { name: 'Sergipe', value: 6.26},
+          ],
+          'outubro': [
+              { name: 'Alagoas', value: 6.28},
+              { name: 'Bahia', value: 6.26},
+              { name: 'Ceará', value: 6.15},
+              { name: 'Espírito Santo', value: 6.34},
+              { name: 'Minas Gerais', value: 6.08},
+              { name: 'Mato Grosso do Sul', value: 6.09},
+              { name: 'Mato Grosso', value: 6.07},
+              { name: 'Paraíba', value: 6.04},
+              { name: 'Pernambuco', value: 6.05},
+              { name: 'Paraná', value: 6.14},
+              { name: 'Rio de Janeiro', value: 6.04},
+              { name: 'Rio Grande do Norte', value: 6.34},
+              { name: 'Rio Grande do Sul', value: 6.12},
+              { name: 'Santa Catarina', value: 6.25},
+              { name: 'São Paulo', value: 5.92},
+              { name: 'Amazonas', value: 7.11},
+              { name: 'Sergipe', value: 6.06},
+          ],
+          'novembro': [
+              { name: 'Alagoas', value: 6.24},
+              { name: 'Bahia', value: 6.28},
+              { name: 'Ceará', value: 6.17},
+              { name: 'Espírito Santo', value: 6.29},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.1},
+              { name: 'Mato Grosso', value: 6.12},
+              { name: 'Paraíba', value: 5.95},
+              { name: 'Pernambuco', value: 6.11},
+              { name: 'Paraná', value: 6.18},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.25},
+              { name: 'Rio Grande do Sul', value: 6.09},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.94},
+              { name: 'Amazonas', value: 7.12},
+              { name: 'Sergipe', value: 6.04},
+          ],
+          'dezembro': [
+              { name: 'Alagoas', value: 6.27},
+              { name: 'Bahia', value: 6.36},
+              { name: 'Ceará', value: 6.38},
+              { name: 'Espírito Santo', value: 6.19},
+              { name: 'Minas Gerais', value: 6.06},
+              { name: 'Mato Grosso do Sul', value: 6.11},
+              { name: 'Mato Grosso', value: 6.15},
+              { name: 'Paraíba', value: 5.94},
+              { name: 'Pernambuco', value: 6.15},
+              { name: 'Paraná', value: 6.23},
+              { name: 'Rio de Janeiro', value: 6.07},
+              { name: 'Rio Grande do Norte', value: 6.42},
+              { name: 'Rio Grande do Sul', value: 6.1},
+              { name: 'Santa Catarina', value: 6.27},
+              { name: 'São Paulo', value: 5.98},
+              { name: 'Amazonas', value: 7.13},
+              { name: 'Sergipe', value: 6.28},
+          ],
+        },
+    };
+
+    const anos = ['julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+
+    function getOption(tipo) {
+      return {
+        baseOption: {
+          timeline: {
+            axisType: 'category',
+            autoPlay: true,
+            playInterval: 3000,
+            data: anos,
+            bottom: 30,
+            left: 'center',
+            width: '80%',
+            symbol: 'circle',
+            symbolSize: 6,
+            lineStyle: {
+              color: '#d2d2d7'
+            },
+            label: {
+              color: '#86868b',
+              fontSize: 11
+            },
+            checkpointStyle: {
+              color: '#0071e3',
+              borderColor: '#0071e3'
+            },
+            controlStyle: {
+              show: true,
+              color: '#0071e3',
+              borderColor: '#0071e3'
+            }
+          },
+          title: {
+            text: `Evolução do preço de {bold|${tipo.toLowerCase()}} por estado`,
+            left: 'center',
+            top: 10,
+            textStyle: {
+              fontSize: 18,
+              fontWeight: 500,
+              color: '#1d1d1f',
+              rich: {
+                bold: {
+                  fontWeight: 800,
+                  fontSize: 18
+                }
+              }
+            },
+            subtextStyle: {
+              color: '#86868b',
+              fontSize: 12
+            }
+          },
+          tooltip: {
+            trigger: 'item',
+            formatter: function (params) {
+              return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
+                     <div>Preço por Litro: <span style="font-weight: 800;">R$ ${params.value?.toFixed(2)}</span></div>`;
+            },
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderColor: '#d2d2d7',
+            borderWidth: 1,
+            textStyle: {
+              color: '#1d1d1f',
+              fontWeight: 'normal'
+            },
+            padding: [10, 15]
+          },
+          visualMap: {
+            right: 50,
+            bottom: 80,
+            min: 3,
+            max: 8,
+            inRange: {
+              color: [
+                '#1e40af', '#3b82f6', '#51cf66', '#ffd43b', '#ff0000'
+              ],
+              colorStops: [
+                { offset: 0, color: '#1e40af' },
+                { offset: 0.01, color: '#3b82f6' },
+                { offset: 0.05, color: '#51cf66' },
+                { offset: 0.20, color: '#51cf66' },
+                { offset: 0.30, color: '#ffd43b' },
+                { offset: 0.60, color: '#ffd43b' },
+                { offset: 0.65, color: '#ff6b00' },
+                { offset: 1, color: '#ff0000' }
+              ]
+            },
+            text: ['Maior', 'Menor'],
+            textStyle: {
+              color: '#86868b'
+            },
+            calculable: true,
+            itemWidth: 20,
+            itemHeight: 200,
+            borderWidth: 0,
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            padding: 10,
+            formatter: function (value) {
+              if (value === 3 || value === 8) {
+                return value;
+              }
+              return value.toFixed(2);
+            },
+            textGap: 10,
+            orient: 'vertical',
+            align: 'left'
+          },
+          series: [
+            {
+              type: 'map',
+              map: 'Brazil',
+              roam: true,
+              zoom: 1.0,
+              center: [-55, -15],
+              top: 60,
+              bottom: 70,
+              itemStyle: {
+                borderColor: '#fff',
+                borderWidth: 1
+              },
+              emphasis: {
+                label: { 
+                  show: false
+                },
+                itemStyle: {
+                  borderWidth: 2,
+                  borderColor: '#fff',
+                  shadowColor: 'rgba(0, 0, 0, 0.2)',
+                  shadowBlur: 10,
+                  areaColor: 'inherit'
+                }
+              }
+            }
+          ]
+        },
+        options: anos.map(ano => ({
+          series: [{
+            data: dadosCombustivel[tipo][ano]
+          }]
+        }))
+      };
+    }
+
+    $.get('brazil.json', function (brJson) {
+      echarts.registerMap('Brazil', brJson);
+      myChart.hideLoading();
+      myChart.setOption(getOption('GASOLINA'));
+
+      // Adiciona evento de redimensionamento
+      window.addEventListener('resize', function() {
+        myChart.resize();
+      });
+
+      document.getElementById('combustivel').addEventListener('change', function () {
+        const tipo = this.value;
+        myChart.setOption(getOption(tipo), true);
+      });
+    });
+  </script>
+</body>
+</html>
