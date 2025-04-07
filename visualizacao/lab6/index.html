@@ -1,58 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt-br" style="height: 100%">
+
 <head>
   <meta charset="UTF-8" />
   <title>Projeto de Visualização Interativa de Dados</title>
   <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #0071e3;
-      --background-color: #f5f5f7;
-      --text-color: #1d1d1f;
-      --border-color: #d2d2d7;
-      --card-background: #ffffff;
-    }
-
-    * {
+    html,
+    body,
+    form,
+    fieldset,
+    table,
+    tr,
+    td,
+    img {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-      font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+      font: 100%/150% calibri, helvetica, sans-serif;
     }
 
-    body {
-      background-color: var(--background-color);
-      color: var(--text-color);
-      line-height: 1.5;
-    }
-
-    .container {
-      max-width: 1170px;
-      margin: 0 auto;
-      padding: 10px;
-    }
-
-    .header {
-      background-color: var(--card-background);
-      padding: 15px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      width: calc(100% - 30px);
-    }
-
-    .header h1 {
-      font-size: 20px;
-      font-weight: 600;
-      margin-bottom: 5px;
-      color: var(--text-color);
-    }
-
-    .header p {
-      font-size: 14px;
-      color: var(--text-color);
+    td,
+    td * {
+      max-height: 30px !important;
     }
 
     .controls {
@@ -108,7 +80,7 @@
       position: absolute;
       top: 60px;
       left: 20px;
-      background-color: rgba(255, 255, 255, 0.9);
+      background-color: #ffffffe6;
       padding: 10px 15px;
       border-radius: 8px;
       z-index: 1000;
@@ -182,61 +154,40 @@
       margin-right: 6px;
       margin-top: -1px;
     }
-
-    .university-info {
-      background-color: var(--card-background);
-      padding: 10px;
-      border-radius: 12px;
-      margin-bottom: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      width: calc(100% - 30px);
-    }
-
-    .university-info table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .university-info td {
-      padding: 5px;
-      font-size: 14px;
-      color: var(--text-color);
-    }
-
-    .university-info td:last-child {
-      text-align: right;
-    }
   </style>
 </head>
-<body>
-  <div class="container">
-    <div class="university-info">
-      <table>
-        <tbody>
-          <tr>
-            <td>UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - UFCG</td>
-            <td>Disciplina: Visualização de Dados (TECC)</td>
-          </tr>
-          <tr>
-            <td>CENTRO DE ENGENHARIA ELÉTRICA E INFORMÁTICA - CEEI</td>
-            <td>Professor: Maxwell Guimarães de Oliveira</td>
-          </tr>
-          <tr>
-            <td>UNIDADE ACADÊMICA DE SISTEMAS E COMPUTAÇÃO - UASC</td>
-            <td>Período: 2024.2</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
 
-    <div class="header">
-      <h1>Projeto de Visualização Interativa de Dados</h1>
-      <p><u>Grupo G</u>: Huandrey Pontes, Igor Correia, Junior Silva, Thalles Vasconcelos</p>
-      <p style="margin-top: 10px; font-size: 14px; color: #1d1d1f;">
-        Este projeto utiliza uma série histórica de preços de combustíveis no Brasil entre julho e dezembro de 2024, publicada pela ANP.
-        A visualização permite observar variações de preços por estado, ao longo do tempo e entre diferentes tipos de combustíveis.
-        Com isso, conta três histórias principais: disparidades regionais, tendências temporais e comparações entre combustíveis.
-      </p>
+<body>
+
+  <body style="width: 100%; height: 100%; margin: 0">
+    <table style="width: 100%; margin: 0px; padding: 0px; border-width:0px;">
+      <tbody>
+        <tr height="10px">
+          <td>UNIVERSIDADE FEDERAL DE CAMPINA GRANDE - UFCG</td>
+          <td style="text-align: right;">Disciplina: Visualiza&ccedil;&atilde;o de Dados (TECC)</td>
+        </tr>
+        <tr>
+          <td>CENTRO DE ENGENHARIA EL&Eacute;TRICA E INFORM&Aacute;TICA - CEEI</td>
+          <td style="text-align: right;">Professor: Maxwell Guimar&atilde;es de Oliveira</td>
+        </tr>
+        <tr>
+          <td>UNIDADE ACAD&Ecirc;MICA DE SISTEMAS E COMPUTA&Ccedil;&Atilde;O - UASC</td>
+          <td style="text-align: right;">Período: 2024.2</td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="header">
+      <h2 style="text-align:center;">Projeto de Visualização Interativa de Dados</h2>
+      <h4 style="text-align:center;"><u>Grupo G</u>: Huandrey Pontes, Igor Correia, Junior Silva, Thalles Vasconcelos
+        &nbsp; &nbsp;</h4>
+      <p style="text-align:center;">&nbsp;</p>
+      <h2 style="text-align:center;"><span
+          style="font-family:'Lucida Sans Unicode', 'Lucida Grande', sans-serif;"><strong>Visualização da Evolução dos
+            Preços Médios de combustíveis por Estado ao Longo do Tempo</strong></span></h3>
+        <p style="text-align:justify; padding: 10px 50px 10px 50px;">Este projeto utiliza uma série histórica de preços
+          de combustíveis no Brasil entre julho e dezembro de 2024, publicada pela ANP. A visualização permite observar
+          variações de preços por estado, ao longo do tempo e entre diferentes tipos de combustíveis. Com isso, conta
+          três histórias principais: disparidades regionais, tendências temporais e comparações entre combustíveis..</p>
     </div>
 
     <div class="map-container">
@@ -251,233 +202,240 @@
           <option value="GNV">GNV</option>
         </select>
       </div>
-      <div class="tips-overlay">
-        <h3>Dicas de Interação:</h3>
-        <ul>
-          <li>Selecione o combustível no menu acima</li>
-          <li>Passe o mouse sobre os estados para ver os preços</li>
-          <li>Use a linha do tempo abaixo para navegar entre os meses</li>
-          <li>Use o filtro da direita para mudar a faixa de preço</li>
-        </ul>
-      </div>
       <div id="main"></div>
     </div>
-  </div>
+    </div>
+    <div id="footer" style="height: 2%">
+      <p style="text-align:justify; padding: 20px 50px 0px 50px;"><b>Dicas para interagir com a visualização</b>:</p>
+      <ul style="padding: 0px 50px 10px 75px;">
+        <li>Selecione o combustível no menu acima</li>
+        <li>Passe o mouse sobre os estados para ver os preços
+        </li>
+        <li>Use a linha do tempo para navegar entre os meses
+        </li>
+        <li> Use o filtro da direita para selecionar a faixa de preço de interesse</li>
+      </ul>
+    </div>
+    </div>
 
-  <script>
-    var myChart = echarts.init(document.getElementById('main'));
-    myChart.showLoading();
+    <script>
+      var myChart = echarts.init(document.getElementById('main'));
+      myChart.showLoading();
 
-    let dadosCombustivel = {}
-    const anos = ['julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+      let dadosCombustivel = {}
+      const anos = ['julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
 
-    function getMinMaxValues(tipo) {
-      let min = Infinity;
-      let max = -Infinity;
-      
-      anos.forEach(ano => {
-        dadosCombustivel[tipo][ano].forEach(item => {
-          if (item.value < min) min = item.value;
-          if (item.value > max) max = item.value;
+      function getMinMaxValues(tipo) {
+        let min = Infinity;
+        let max = -Infinity;
+
+        anos.forEach(ano => {
+          dadosCombustivel[tipo][ano].forEach(item => {
+            if (item.value < min) min = item.value;
+            if (item.value > max) max = item.value;
+          });
         });
-      });
-      
-      return { min, max };
-    }
 
-    function getOption(tipo) {
-      const { min, max } = getMinMaxValues(tipo);
-      
-      return {
-        baseOption: {
-          timeline: {
-            axisType: 'category',
-            autoPlay: true,
-            playInterval: 3000,
-            data: anos,
-            bottom: 30,
-            left: 'center',
-            width: '80%',
-            symbol: 'circle',
-            symbolSize: 6,
-            lineStyle: {
-              color: '#d2d2d7'
-            },
-            label: {
-              color: '#86868b',
-              fontSize: 11,
-              formatter: function(value, index) {
-                return value;
+        return { min, max };
+      }
+
+      function getOption(tipo) {
+        const { min, max } = getMinMaxValues(tipo);
+
+        return {
+          baseOption: {
+            timeline: {
+              axisType: 'category',
+              autoPlay: true,
+              playInterval: 3000,
+              data: anos,
+              bottom: 30,
+              left: 'center',
+              width: '80%',
+              symbol: 'circle',
+              symbolSize: 6,
+              lineStyle: {
+                color: '#d2d2d7'
+              },
+              label: {
+                color: '#86868b',
+                fontSize: 11,
+                formatter: function (value, index) {
+                  return value;
+                }
+              },
+              checkpointStyle: {
+                color: '#0071e3',
+                borderColor: '#0071e3'
+              },
+              controlStyle: {
+                show: true,
+                color: '#0071e3',
+                borderColor: '#0071e3'
+              },
+              tooltip: {
+                show: false
               }
             },
-            checkpointStyle: {
-              color: '#0071e3',
-              borderColor: '#0071e3'
-            },
-            controlStyle: {
-              show: true,
-              color: '#0071e3',
-              borderColor: '#0071e3'
+            title: {
+              text: `Evolução dos Preços Médios de {bold|${tipo.toLowerCase()}} por Estado ao Longo do Tempo`,
+              left: 'center',
+              top: 10,
+              textStyle: {
+                fontSize: 18,
+                fontWeight: 500,
+                color: '#1d1d1f',
+                rich: {
+                  bold: {
+                    fontWeight: 800,
+                    fontSize: 18
+                  }
+                }
+              },
+              subtextStyle: {
+                color: '#86868b',
+                fontSize: 12
+              }
             },
             tooltip: {
-              show: false
-            }
-          },
-          title: {
-            text: `Evolução do preço de {bold|${tipo.toLowerCase()}} por estado`,
-            left: 'center',
-            top: 10,
-            textStyle: {
-              fontSize: 18,
-              fontWeight: 500,
-              color: '#1d1d1f',
-              rich: {
-                bold: {
-                  fontWeight: 800,
-                  fontSize: 18
-                }
-              }
-            },
-            subtextStyle: {
-              color: '#86868b',
-              fontSize: 12
-            }
-          },
-          tooltip: {
-            trigger: 'item',
-            formatter: function (params) {
-              if (isNaN(params.value)) {
-                return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
+              trigger: 'item',
+              formatter: function (params) {
+                if (isNaN(params.value)) {
+                  return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
                        <div style="font-weight: 800;">Dado inválido</div>`;
-              }
-              if (tipo === 'GNV') {
-                return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
+                }
+                if (tipo === 'GNV') {
+                  return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
                        <div>Preço por m³: <span style="font-weight: 800;">R$ ${params.value?.toFixed(2)}</span></div>`;
-              }
-              return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
+                }
+                return `<div style="font-weight: 800; margin-bottom: 5px;">${params.name}</div>
                      <div>Preço por Litro: <span style="font-weight: 800;">R$ ${params.value?.toFixed(2)}</span></div>`;
-            },
-            backgroundColor: 'rgba(255, 255, 255, 0.95)',
-            borderColor: '#d2d2d7',
-            borderWidth: 1,
-            textStyle: {
-              color: '#1d1d1f',
-              fontWeight: 'normal'
-            },
-            padding: [10, 15]
-          },
-          visualMap: {
-            right: 50,
-            bottom: 80,
-            min: min,
-            max: max,
-            inRange: {
-              color: [
-                '#1e40af', '#3b82f6', '#51cf66', '#ffd43b', '#ff0000'
-              ],
-              colorStops: [
-                { offset: 0, color: '#1e40af' },
-                { offset: 0.01, color: '#3b82f6' },
-                { offset: 0.05, color: '#51cf66' },
-                { offset: 0.20, color: '#51cf66' },
-                { offset: 0.30, color: '#ffd43b' },
-                { offset: 0.60, color: '#ffd43b' },
-                { offset: 0.65, color: '#ff6b00' },
-                { offset: 1, color: '#ff0000' }
-              ]
-            },
-            text: ['Maior', 'Menor'],
-            textStyle: {
-              color: '#86868b'
-            },
-            calculable: true,
-            itemWidth: 20,
-            itemHeight: 200,
-            borderWidth: 0,
-            backgroundColor: 'rgba(255, 255, 255, 0.8)',
-            padding: 10,
-            formatter: function (value) {
-              return 'R$ ' + value.toFixed(2);
-            },
-            textGap: 10,
-            orient: 'vertical',
-            align: 'left'
-          },
-          series: [
-            {
-              type: 'map',
-              map: 'Brazil',
-              roam: true,
-              zoom: 1.0,
-              center: [-55, -15],
-              top: 60,
-              bottom: 70,
-              selectedMode: false,
-              itemStyle: {
-                borderColor: '#fff',
-                borderWidth: 1
               },
-              emphasis: {
-                label: { 
-                  show: false
-                },
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              borderColor: '#d2d2d7',
+              borderWidth: 1,
+              textStyle: {
+                color: '#1d1d1f',
+                fontWeight: 'normal'
+              },
+              padding: [10, 15]
+            },
+            visualMap: {
+              right: 50,
+              bottom: 80,
+              min: min,
+              max: max,
+              inRange: {
+                color: [
+                  '#1e40af', '#3b82f6', '#51cf66', '#ffd43b', '#ff0000'
+                ],
+                colorStops: [
+                  { offset: 0, color: '#1e40af' },
+                  { offset: 0.01, color: '#3b82f6' },
+                  { offset: 0.05, color: '#51cf66' },
+                  { offset: 0.20, color: '#51cf66' },
+                  { offset: 0.30, color: '#ffd43b' },
+                  { offset: 0.60, color: '#ffd43b' },
+                  { offset: 0.65, color: '#ff6b00' },
+                  { offset: 1, color: '#ff0000' }
+                ]
+              },
+              outOfRange: {
+                color: '#828282'
+              },
+              text: ['Maior', 'Menor'],
+              textStyle: {
+                color: '#86868b'
+              },
+              calculable: true,
+              itemWidth: 20,
+              itemHeight: 200,
+              borderWidth: 0,
+              backgroundColor: 'rgba(255, 255, 255, 0.8)',
+              padding: 10,
+              formatter: function (value) {
+                return 'R$ ' + value.toFixed(2);
+              },
+              textGap: 10,
+              orient: 'vertical',
+              align: 'left'
+            },
+            series: [
+              {
+                type: 'map',
+                map: 'Brazil',
+                roam: true,
+                zoom: 1.0,
+                center: [-55, -15],
+                top: 60,
+                bottom: 70,
+                selectedMode: false,
                 itemStyle: {
-                  borderWidth: 2,
                   borderColor: '#fff',
-                  shadowColor: 'rgba(0, 0, 0, 0.2)',
-                  shadowBlur: 10,
-                  areaColor: 'inherit'
-                }
-              },
-              select: {
-                disabled: true,
-                label: {
-                  show: false
+                  borderWidth: 1
                 },
-                itemStyle: {
-                  areaColor: 'inherit'
+                emphasis: {
+                  label: {
+                    show: false
+                  },
+                  itemStyle: {
+                    borderWidth: 2,
+                    borderColor: '#fff',
+                    shadowColor: 'rgba(0, 0, 0, 0.2)',
+                    shadowBlur: 10,
+                    areaColor: 'inherit'
+                  }
+                },
+                select: {
+                  disabled: true,
+                  label: {
+                    show: false
+                  },
+                  itemStyle: {
+                    areaColor: 'inherit'
+                  }
                 }
               }
-            }
-          ]
-        },
-        options: anos.map(ano => ({
-          series: [{
-            data: dadosCombustivel[tipo][ano]
-          }]
-        }))
-      };
-    }
+            ]
+          },
+          options: anos.map(ano => ({
+            series: [{
+              data: dadosCombustivel[tipo][ano]
+            }]
+          }))
+        };
+      }
 
-    function carregarDados() {
-      fetch('combustiveis.json')
-        .then(response => response.json())
-        .then(data => {
-          dadosCombustivel = data;
-          inicializarGrafico();
-        })
-        .catch(error => {
-          console.error('Erro ao carregar dados:', error);
+      function carregarDados() {
+        fetch('combustiveis.json')
+          .then(response => response.json())
+          .then(data => {
+            dadosCombustivel = data;
+            inicializarGrafico();
+          })
+          .catch(error => {
+            console.error('Erro ao carregar dados:', error);
+            myChart.hideLoading();
+          });
+      }
+
+      function inicializarGrafico() {
+        $.get('brazil.json', function (brJson) {
+          echarts.registerMap('Brazil', brJson);
           myChart.hideLoading();
-        });
-    }
+          myChart.setOption(getOption('GASOLINA'));
 
-    function inicializarGrafico() {
-      $.get('brazil.json', function(brJson) {
-        echarts.registerMap('Brazil', brJson);
-        myChart.hideLoading();
-        myChart.setOption(getOption('GASOLINA'));
-
-        window.addEventListener('resize', function() {
+          window.addEventListener('resize', function () {
             myChart.resize();
-        });
+          });
 
-        document.getElementById('combustivel').addEventListener('change', function() {
+          document.getElementById('combustivel').addEventListener('change', function () {
             myChart.setOption(getOption(this.value), true);
+          });
         });
-      });
-    }
-    carregarDados();
-  </script>
-</body>
+      }
+      carregarDados();
+    </script>
+  </body>
+
 </html>
